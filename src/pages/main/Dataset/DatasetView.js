@@ -5,6 +5,7 @@ import { Card,Divider,Button,Icon,Modal,Form,Table,Spin } from 'antd';
 
 import styles from './opr.less';
 
+// 创建数显示列表
 @connect((state) => ({
   success: state.ds.success,
   error: state.ds.error,
@@ -40,16 +41,16 @@ class DatasetView extends Component{
           },
           {
             title: '分类数',
-            dataIndex: 'label_amount',
+            dataIndex: 'labels',
             width:'100',
             className:styles.columnSize,
-            key: 'label_amount',
+            key: 'labels',
           },
           {
             title: '图片数',
-            dataIndex: 'images_amount',
+            dataIndex: 'images',
             width:'100',
-            key: 'images_amount',
+            key: 'images',
             className:styles.columnSize
           },
           {
@@ -64,8 +65,7 @@ class DatasetView extends Component{
             width:'180px',
             key: 'opr',
             className:styles.columnSize,
-            render: (text, record) => (this.oprBtn(text, record))
-              
+            render: (text, record) => (this.oprBtn(text, record))    
           },]
 
 	}
@@ -74,7 +74,12 @@ class DatasetView extends Component{
     const { dispatch } = this.props;
     const oprKey = this.props.match.params.oprKey;
     this.setState({oprKey:oprKey});
-  
+    if(oprKey != '0'){
+      const { columns } = this.state;
+      // 删除标签数量
+      columns.splice(3,1);
+      this.setState({columns:columns})
+    }
     dispatch({
       type: 'ds/queryDsList',
       payload:{dataset_type:oprKey},
@@ -85,13 +90,12 @@ class DatasetView extends Component{
 
   }
 
+  // 操作按钮列
   oprBtn = (text, record) =>{
     const {oprKey} = this.state;
     if(oprKey == '0'){
       return <span>
             <a onClick={()=>this.skipLabelView(text, record)}>查看</a>
-            <Divider type="vertical" />
-            <a onClick={()=>this.uploadDs}>上传</a>
             <Divider type="vertical" />
             <a onClick={()=>this.deleteDataset(text, record)}>删除</a>
         </span>
@@ -99,25 +103,17 @@ class DatasetView extends Component{
       return <span>
             <a onClick={()=>this.skipLabelView(text, record)}>查看</a>
             <Divider type="vertical" />
-            <a onClick={()=>this.uploadDs}>上传</a>
-            <Divider type="vertical" />
-            <a onClick={()=>this.labelDs}>标注</a>
-            <Divider type="vertical" />
             <a onClick={()=>this.deleteDataset(text, record)}>删除</a>
         </span>
     }
         
   }
 
+  // 查看
   skipLabelView = (text, record) =>{
     const { dataset_id,dataset_name } = record;
     const {oprKey} = this.state;
     router.push('/main/work/opr/'+oprKey+'/lv',{dataset_id:dataset_id,dataset_name:dataset_name});
-  }
-
-  // 上传数据集
-  uploadDs = () =>{
-    
   }
 
   // 显示数据集类型
@@ -135,12 +131,12 @@ class DatasetView extends Component{
     }
     return <span>{dataset_type_name}</span>;
   }
+
   // 标注
   labelDs = () =>{
     const {oprKey} = this.state;
     router.push('/main/work/opr/'+oprKey+'/lb');
   }
-
 
   // 删除数据集
   deleteDataset = (text, record) =>{

@@ -99,19 +99,6 @@ export function setLabelName(labelName){
 		_via_img_metadata['imgdata']['regions'][_via_user_sel_region_id].region_attributes['label_name'] = labelName;
 	}
 
-	// var regions = _via_img_metadata['imgdata']['regions'];
-	// console.log(regions);
-	// for(var i=0;i<regions.length;i++){
-	// 	var rs = _via_img_metadata['imgdata']['regions'][i];
-	// 	if(rs == null || rs == undefined) continue;
-	// 	if(!rs.hasOwnProperty('region_attributes')) continue;
-		
-	// 	var label_name = rs.region_attributes['label_name'];
-	// 	if(label_name == "" || label_name == undefined){
-	// 		flag = true;
-	// 		_via_img_metadata['imgdata']['regions'][i].region_attributes['label_name'] = labelName;
-	// 	}
-	// }
 	if(flag) refreshCanvasfun();
 }
 
@@ -143,7 +130,7 @@ export function setIscrowd(iscrowds){
 }
 
 // 标注
-export function objLabel(params,call_back,regionShape,init_width,init_height,imgZoomTemp){
+export function objLabel(params,call_back,regionShape,init_width,init_height,imgZoomTemp,initNum){
     console.log(_via_img_metadata);
     _via_img_metadata = {'imgdata':{'regions':[]}};
     _via_canvas_regions = [];
@@ -282,13 +269,15 @@ export function objLabel(params,call_back,regionShape,init_width,init_height,img
 	  this.shape_attributes  = {}; // region shape attributes
 	  this.region_attributes = {}; // region attributes
 	}
-
+	if(initNum == 0){
+		_via_init_keyboard_handlers();
+	    _via_init_mouse_handlers();
+	}
 	//初始化点击事件
-	_via_init_keyboard_handlers();
-	_via_init_mouse_handlers();
 	init_data(params.data);
 	// 初始化数据
 	function init_data(labelData){
+
 		for(var i =0;i<labelData.length;i++){
 			var region_i = new file_region();
 			var iscrowd = labelData[i]['iscrowd'];
@@ -348,24 +337,19 @@ export function objLabel(params,call_back,regionShape,init_width,init_height,img
 
 	// handles drawing of regions over image by the user
 	function _via_init_mouse_handlers() {
-	  _via_reg_canvas.addEventListener('dblclick', _via_reg_canvas_dblclick_handler, false);
-	  _via_reg_canvas.addEventListener('mousedown', _via_reg_canvas_mousedown_handler, false);
-	  _via_reg_canvas.addEventListener('mouseup', _via_reg_canvas_mouseup_handler, false);
-	  _via_reg_canvas.addEventListener('mouseover', _via_reg_canvas_mouseover_handler, false);
-	  _via_reg_canvas.addEventListener('mousemove', _via_reg_canvas_mousemove_handler, false);
-	  _via_reg_canvas.addEventListener('wheel', _via_reg_canvas_mouse_wheel_listener, false);
-	  // touch screen event handlers
-	  // @todo: adapt for mobile users
-	  _via_reg_canvas.addEventListener('touchstart', _via_reg_canvas_mousedown_handler, false);
-	  _via_reg_canvas.addEventListener('touchend', _via_reg_canvas_mouseup_handler, false);
-	  _via_reg_canvas.addEventListener('touchmove', _via_reg_canvas_mousemove_handler, false);
+	   _via_reg_canvas.addEventListener('dblclick', _via_reg_canvas_dblclick_handler, false);
+	   _via_reg_canvas.addEventListener('mousedown', _via_reg_canvas_mousedown_handler, false);
+	   _via_reg_canvas.addEventListener('mouseup', _via_reg_canvas_mouseup_handler, false);
+	   _via_reg_canvas.addEventListener('mouseover', _via_reg_canvas_mouseover_handler, false);
+	   _via_reg_canvas.addEventListener('mousemove', _via_reg_canvas_mousemove_handler, false);
+	   _via_reg_canvas.addEventListener('wheel', _via_reg_canvas_mouse_wheel_listener, false);
+	   // touch screen event handlers
+	   _via_reg_canvas.addEventListener('touchstart', _via_reg_canvas_mousedown_handler, false);
+	   _via_reg_canvas.addEventListener('touchend', _via_reg_canvas_mouseup_handler, false);
+	   _via_reg_canvas.addEventListener('touchmove', _via_reg_canvas_mousemove_handler, false);
 	}
 
 	function _via_window_keydown_handler(e) {
-		//console.log('_via_window_keydown_handler');
-		// if ( e.target === document.body ) {
-		//     _via_handle_global_keydown_event(e);
-		// }
 		_via_reg_canvas_keydown_handler(e);
     }
 
@@ -494,7 +478,7 @@ export function objLabel(params,call_back,regionShape,init_width,init_height,img
 		_via_click_x0 = e.offsetX/scale; _via_click_y0 = e.offsetY/scale;
 		// console.log("_via_reg_canvas_mousedown_handler:"+_via_click_x0,_via_click_y0);
 		// console.log(_via_img_metadata);
-	 //    console.log(_via_canvas_regions);
+	    // console.log(_via_canvas_regions);
 
 		_via_region_edge = is_on_region_corner(_via_click_x0, _via_click_y0);
 		var region_id = is_inside_region(_via_click_x0, _via_click_y0);
@@ -770,22 +754,10 @@ export function objLabel(params,call_back,regionShape,init_width,init_height,img
 	          if ( is_on_edge === _via_region_edge[1] ) {
 	            // click on edge, hence add new vertex
 	            var vertex_index = is_on_edge - VIA_POLYGON_RESIZE_VERTEX_OFFSET;
-	            // var canvas_x0 = Math.round(_via_click_x1);
-	            // var canvas_y0 = Math.round(_via_click_y1);
-	            // 误差
-	            // var img_x0 = Math.round( canvas_x0 * _via_canvas_scale );
-	            // var img_y0 = Math.round( canvas_y0 * _via_canvas_scale );
-	            // canvas_x0 = Math.round( img_x0 / _via_canvas_scale );
-	            // canvas_y0 = Math.round( img_y0 / _via_canvas_scale );
-	            // canvas_x0 = Math.round( img_x0 / _via_canvas_scale );
-	            // canvas_y0 = Math.round( img_y0 / _via_canvas_scale );
-	            //console.log("_via_reg_canvas_mouseup_handler:333"+_via_click_x1,_via_click_y1);
-	            _via_canvas_regions[region_id].shape_attributes['all_points_x'].splice(vertex_index+1, 0, _via_click_x1);
+	         	_via_canvas_regions[region_id].shape_attributes['all_points_x'].splice(vertex_index+1, 0, _via_click_x1);
 	            _via_canvas_regions[region_id].shape_attributes['all_points_y'].splice(vertex_index+1, 0, _via_click_y1);
 	            _via_img_metadata[_via_image_id].regions[region_id].shape_attributes['all_points_x'].splice(vertex_index+1, 0, _via_click_x1);
 	            _via_img_metadata[_via_image_id].regions[region_id].shape_attributes['all_points_y'].splice(vertex_index+1, 0, _via_click_y1);
-
-	            //alert('Added 1 new vertex to ' + shape + ' region');
 	          }
 	        }
 	      } else {
@@ -3076,5 +3048,3 @@ export function objLabel(params,call_back,regionShape,init_width,init_height,img
     refreshCanvasfun = refreshCanvas;
 	
 }
-
-//export default objLabel;

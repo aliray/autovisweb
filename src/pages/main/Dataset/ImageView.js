@@ -7,6 +7,8 @@ import styles from './opr.less';
 
 const { Search } = Input;
 
+
+// 图片显示列表
 @connect((state) => ({
   success: state.ds.success,
   error: state.ds.error,
@@ -67,6 +69,7 @@ class ImageView extends Component{
   // 上传数据集
   uploadImageDataset = () =>{
     const { dataset_id,dataset_name,oprKey,label_name } = this.state;
+    console.log(this.state);
     router.push('/main/work/opr/'+oprKey+'/upImgDs',{dataset_id:dataset_id,dataset_name:dataset_name,label_name:label_name});
   }
 
@@ -79,13 +82,47 @@ class ImageView extends Component{
       cancelText: '取消',
       onOk: () => {
         const { dispatch } = this.props;
+        const { oprKey,dataset_id,label_name } = this.state;
+        record.dataset_type = oprKey;
+        record.dataset_id = dataset_id;
+        record.label_name = label_name;
         dispatch({
-          type:'ds/rmLabel',
+          type:'ds/rmImage',
           payload:record,
         });
       },
     });
    
+  }
+
+  // 删除多个图片
+  deleteImages = () =>{
+    Modal.confirm({
+      title: '删除图片',
+      content: '确定删除选中所有图片吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        const { dispatch } = this.props;
+        const { oprKey,dataset_id,selectedRows,label_name } = this.state;
+
+        var images = new Array();
+        selectedRows.map(item=>{
+          images.push(item.image_code);    
+        });
+
+        var record = {
+          dataset_type:oprKey,
+          dataset_id:dataset_id,
+          images:images,
+          label_name:label_name
+        }
+        dispatch({
+          type:'ds/rmImages',
+          payload:record,
+        });
+      },
+    });
   }
   // 查询图片
 	searchImage = v =>{

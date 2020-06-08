@@ -5,12 +5,11 @@ import { connect } from 'dva';
 import Authorized from '@/utils/Authorized';
 import { getAuthority } from '@/utils/authority';
 import Exception403 from '@/pages/Exception/403';
+import router from 'umi/router';
 
 function AuthComponent({ children, location, routerData }) {
   const auth = getAuthority();
-  const isLogin = auth && auth[0] !== 'guest';
   console.log(auth);
-  console.log(isLogin);
   const getRouteAuthority = (path, routeData) => {
     let authorities;
     routeData.forEach(route => {
@@ -26,11 +25,15 @@ function AuthComponent({ children, location, routerData }) {
     });
     return authorities;
   };
-  console.log("-------------");
+  
+  if(auth == null){
+    router.push('/user/login');
+  }
+
   return (
     <Authorized
       authority={getRouteAuthority(location.pathname, routerData)}
-      noMatch={isLogin ? <Exception403 /> : <Redirect to="/user/login" />}
+      noMatch={auth==null ? <Redirect to="/user/login" /> :<Exception403 />}
     >
       {children}
     </Authorized>

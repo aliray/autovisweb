@@ -8,6 +8,8 @@ import styles from './opr.less';
 const FormItem = Form.Item;
 const SelectOption = Select.Option;
 
+
+// 训练模型
 @connect((state) => ({
   success: state.model.success,
   error: state.model.error,
@@ -116,9 +118,6 @@ class RunModelView extends Component{
 
 	    const options = [
 		  { label: '公有云部署', value: '0' },
-		  { label: '私有服务器部署', value: '1' },
-		  { label: '设备端SDK', value: '2' },
-		  { label: '软硬一体方案', value: '3' },
 		];
 
 	    const loadingIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
@@ -160,11 +159,10 @@ class RunModelView extends Component{
 		                    )}
 		                </FormItem>
 		                <FormItem label='部署类型'>
-		                    {getFieldDecorator('publish_type')(
-		                      <div style={{fontSize:'12px'}}>
+		                    {getFieldDecorator('publish_type',{
+		                      initialValue:'0',
+		                    })(
 		                       <Radio.Group options={options}  value={this.state.publish_type} onChange={this.chgPublishType}/>
-		                       <a>如何选择部署方式？</a>
-		                      </div>
 		                    )}
 		                </FormItem>
 		                <FormItem label='选择算法'>
@@ -179,17 +177,12 @@ class RunModelView extends Component{
 		                       </span>
 						        </Radio>
 						        <Radio value={1}>高性能
-						        <span style={{marginLeft:'8px'}}>
-		                       <Tooltip title='拥有毫秒级响应的性能，模型体积小，但准确率有所降低'>
-		                       <Icon type="question-circle"/></Tooltip>
-		                       </span>
-						        </Radio>
-					        	<Radio value={2}>AutoDL Transfer
-					        	<span style={{marginLeft:'8px'}}>
-			                       <Tooltip title='AutoDL Transfer模型，结合模型网络结构搜索、迁移学习技术、并针对用户数据进行自动优化的模型，与通用算法相比，训练时间较长，但更适用于细分类场景。例如，通用算法可用于区分猫和狗，但如果要区分不同品种的猫，则AutoDL效果会更好'>
-			                       <Icon type="question-circle"/></Tooltip>
+						           <span style={{marginLeft:'8px'}}>
+				                       <Tooltip title='拥有毫秒级响应的性能，模型体积小，但准确率有所降低'>
+				                         <Icon type="question-circle"/>
+				                       </Tooltip>
 			                       </span>
-					        	</Radio>
+						        </Radio>
 						      </Radio.Group>
 		                    )}
 		                </FormItem>

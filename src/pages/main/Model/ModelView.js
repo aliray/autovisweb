@@ -5,6 +5,7 @@ import { Divider,Button,List,Icon,Modal,Form,Table,Spin  } from 'antd';
 
 import styles from './opr.less';
 
+// 模型列表
 @connect((state) => ({
   success: state.model.success,
   error: state.model.error,

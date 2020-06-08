@@ -119,9 +119,6 @@ class Deploy extends Component{
 				                    })(
 				                       <Select  style={{width:'70%'}} placeholder="部署方式" onChange={this.chgDeploy}>
 				                            <SelectOption style={{fontSize:'12px' }} value={0} >公有云部署</SelectOption>
-						                    <SelectOption style={{fontSize:'12px' }} value={1} >私有服务器部署</SelectOption>
-						                    <SelectOption style={{fontSize:'12px' }} value={2} >设备端SDK</SelectOption>
-						                    <SelectOption style={{fontSize:'12px' }} value={3} >软硬一体方案</SelectOption>
 					                    </Select>
 				                    )}
 				                </FormItem>

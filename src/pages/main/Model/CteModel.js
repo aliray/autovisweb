@@ -8,6 +8,7 @@ import styles from './opr.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
+// 创建模型
 @connect((state) => ({
   success: state.model.success,
   error: state.model.error,
@@ -31,6 +32,7 @@ class CteModel extends Component{
 
 	// 保存模型
 	nextSteps = () =>{
+
 		const { form,dispatch } = this.props;
 		const { oprKey } = this.state;
 		let data;
@@ -39,6 +41,7 @@ class CteModel extends Component{
 			if(err) return;
 			data = fieldsValue;
 			data['model_type'] = oprKey;
+			//dva
 			dispatch({
 		        type: 'model/saveModel',
 		        payload: data,

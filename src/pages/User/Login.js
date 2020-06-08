@@ -15,8 +15,10 @@ const FormItem = Form.Item;
 class LoginPage extends Component {
   state = {
     currentUser:{},
-    cookieNone:'0'
+    cookieNone:'0',
+    msgShow:true,
   }
+
   // 登录
   handleSubmit = () => {
     console.log(navigator.cookieEnabled);
@@ -33,6 +35,7 @@ class LoginPage extends Component {
         },
       }).then(() => {
         const { success } = this.props;
+        this.setState({msgShow:success})
         if(success){
           router.push('/main/work');
         }
@@ -55,7 +58,7 @@ class LoginPage extends Component {
 
   render() {
     const { submitting,success,form: { getFieldDecorator }} = this.props;
-    const { cookieNone } = this.state;
+    const { cookieNone,msgShow } = this.state;
 
     const formItemLayout = {
            labelCol: {
@@ -72,7 +75,7 @@ class LoginPage extends Component {
          <div className={styles.tabs}>
             <Tabs defaultActiveKey="1" onChange={this.chgTabPane} >
               <TabPane tab='账号登录' key="1">
-                 {!success && this.renderMessage()}
+                 {!msgShow && this.renderMessage()}
                 <Form {...formItemLayout}>
                   <FormItem label='用户名'>
                       {getFieldDecorator('user_name',{

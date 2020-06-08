@@ -7,6 +7,7 @@ import styles from './opr.less';
 
 const FormItem = Form.Item;
 
+// 图片上传页面
 @connect((state) => ({
   success: state.ds.success,
   error: state.ds.error,
@@ -18,17 +19,17 @@ class UploadImageDatasetView extends Component{
 	    dataset_id:'',
 	    dataset_name:'',
 	    dataset_type:'',
-	    label:'',
+	    label_name:'',
 	}
 
 	componentDidMount() {
 	    const oprKey = this.props.match.params.oprKey;
-	    const { dataset_id,dataset_name,label } = this.props.location.state;
+	    const { dataset_id,dataset_name,label_name } = this.props.location.state;
 
 	    this.setState({dataset_id:dataset_id,
 	    	dataset_name:dataset_name,
 	    	dataset_type:oprKey,
-	    	label:label
+	    	label_name:label_name
 	    });
 
 	    setTimeout(_=>{ 
@@ -62,7 +63,7 @@ class UploadImageDatasetView extends Component{
 
 	//
 	saveDataset = () =>{
-	    const { dataset_id,dataset_type,fileList,label } = this.state;
+	    const { dataset_id,dataset_type,fileList,label_name } = this.state;
 	    const { dispatch,form } = this.props;
 	    console.log(fileList);
 	    
@@ -72,13 +73,13 @@ class UploadImageDatasetView extends Component{
 	      	dataset_id:dataset_id,
 	      	dataset_type:dataset_type,
 	      	fileList:fileList,
-	      	label:label
+	      	label_name:label_name
 	      }
 	    }).then(()=>{
 	    	const { success,error } = this.props;
 		    if(success){
 		    	router.push('/main/work/opr/'+dataset_type+'/iv',
-			      {dataset_id:dataset_id,dataset_name:dataset_name,label:label}
+			      {dataset_id:dataset_id,dataset_name:dataset_name,label_name:label_name}
 			    );
 		    }else{
 		        console.log(error);
@@ -89,7 +90,7 @@ class UploadImageDatasetView extends Component{
 	render(){
 
 	    const { form: { getFieldDecorator } } = this.props;
-	    const { dataset_id,dataset_name,fileList,label } = this.state;
+	    const { dataset_id,dataset_name,fileList,label_name } = this.state;
 
 	    const formItemLayout = {
 	           labelCol: {
@@ -125,7 +126,7 @@ class UploadImageDatasetView extends Component{
 	        data:{ 
 	          dataset_id: this.state.dataset_id,
 	          dataset_type: this.state.dataset_type,
-	          label:this.state.label,
+	          label_name:this.state.label_name,
 	        },
 	        fileList:this.state.fileList,
 	        onChange(info) {
@@ -155,7 +156,7 @@ class UploadImageDatasetView extends Component{
 		            <div className={styles.menuDesc}>
 		              <div className={styles.menuDescLeft}>数据集 
 		              {dataset_name!='' && <span>> {this.state.dataset_name}</span>}
-		              {label!='' && <span>> {this.state.label}</span>}
+		              {label_name!='' && <span>> {this.state.label_name}</span>}
 		              </div><div className={styles.menuDescRight}><a></a></div>
 		              <Divider  />
 		            </div> 
@@ -168,7 +169,7 @@ class UploadImageDatasetView extends Component{
 			                </FormItem>
 			                <FormItem label="标签" >               
 			                    <div style={{fontSize:'12px'}}>
-			                      {label}
+			                      {label_name}
 			                    </div>
 			                </FormItem>
 			                <FormItem label="上传图片">

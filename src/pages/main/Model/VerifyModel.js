@@ -28,7 +28,7 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 
-
+// 校验模型
 @connect((state) => ({
   success: state.model.success,
   error: state.model.error,

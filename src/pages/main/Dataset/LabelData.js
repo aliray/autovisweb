@@ -66,6 +66,8 @@ const labelImg = [{id:8,srcurl:lbi8},{id:9,srcurl:lbi9},
 {id:14,srcurl:lbi14},{id:15,srcurl:lbi15},{id:16,srcurl:lbi16},{id:17,srcurl:lbi17},
 {id:18,srcurl:lbi18},{id:19,srcurl:lbi19},{id:20,srcurl:lbi20}];
 
+
+// 标注页面
 @connect((state) => ({
   success: state.model.success,
   error: state.model.error,
@@ -87,6 +89,7 @@ class LabelData extends Component{
         img_chg:'0',
         oprKey:'',
         spinLoading:true,
+        initNum:0
 	}
 
 	componentDidMount() {
@@ -155,19 +158,12 @@ class LabelData extends Component{
 	// 设置缩放
 	setZoom = zoom_index =>{
 		var scale = zoomList[zoom_index];
-
-		console.log(scale);
-
 		var label_canvas = document.getElementById("label_canvas");
 		var ctx = label_canvas.getContext("2d");
 
 		var imgSrc = document.getElementById("imgSrc");
 
 		var imgPanel = document.getElementById("imgPanel");
-		console.log('init_height:'+init_height);
-		console.log('tot_height:'+tot_height);
-		console.log('init_width:'+init_width);
-		console.log('tot_width:'+tot_width);
 
 		// 放大缩小图片时，图片操作面积计算
 		if(init_height<tot_height){
@@ -189,12 +185,6 @@ class LabelData extends Component{
         imgSrc.height = init_height*scale;
         imgSrc.width = init_width*scale;
 
-        console.log('label_canvas.height:'+label_canvas.height);
-        console.log('label_canvas.width:'+label_canvas.width);
-        console.log('imgSrc.height:'+imgSrc.height);
-        console.log('imgSrc.height1:'+init_height*scale);
-        console.log('imgSrc.width:'+imgSrc.width);
-        console.log('imgSrc.width2:'+init_width*scale);
 
         label_canvas.style.top = 0;
         label_canvas.style.left = 0;
@@ -335,7 +325,7 @@ class LabelData extends Component{
 	showInput = () => {
 	    this.setState({ inputVisible: true }, () => this.input.focus());
 	}
-
+	// 选择图片筛选
 	chgImgway = v =>{
 		const val = v.target.value;
 		let listImg;
@@ -349,39 +339,8 @@ class LabelData extends Component{
 			listImg = [];
 		}
 		this.setState({listImg:listImg,listImgIndex:0,img_chg:val});
-
-		const { labelList } = this.state;
-
-		zoom_index = 0;
-		const img_width = 720;
-		const img_height = 480;
-
-		// 计算图片展示大小和位置
-		this.setLabelPosition(img_width,img_height);
-		const call_back = this.call_back;
-		const { oprKey } = this.state;
-		let regionShape = '';
-		if(oprKey == '1'){
-			regionShape = 'rect';
-		}else if(oprKey == '2'){
-			regionShape = 'polygon';
-		}else{
-			regionShape = 'polyline';
-		}
-
-		console.log(regionShape);
-
-		const imgInfo = {data:[]};
-		// 设置锁定值
-    	this.setLockLabelName(labelList);
-		setTimeout(function(){
-			if($('.objlabel_id')){
-				objLabelFun.objLabel(imgInfo,call_back,regionShape,init_width,init_height,imgZoom);
-				objImageView.ImageView({width: init_width, height: init_height});
-			}
-	    },1);
 	}
-
+	// 选中需标注的图片
 	chgLabelImg = id =>{
 		const { img_chg } = this.state;
 		this.setState({labelImgUrl:allImg[id-1].srcurl});
@@ -409,7 +368,11 @@ class LabelData extends Component{
 		const imgInfo = {data:[]};
 		// 设置锁定值
     	this.setLockLabelName(labelList);
-		objLabelFun.objLabel(imgInfo,call_back,regionShape,init_width,init_height,imgZoom);
+    	// 控制画图事件重复加载
+    	const { initNum } = this.state;
+
+		objLabelFun.objLabel(imgInfo,call_back,regionShape,init_width,init_height,imgZoom,initNum);
+		this.setState({initNum:initNum+1});
 		objImageView.ImageView({width: init_width, height: init_height});
 		objLabelFun.setScale(1);
 		

@@ -7,6 +7,8 @@ import styles from './opr.less';
 
 const { Search } = Input;
 
+
+// 标签管理页面
 @connect((state) => ({
   success: state.ds.success,
   error: state.ds.error,
@@ -118,14 +120,39 @@ class LabelView extends Component{
       cancelText: '取消',
       onOk: () => {
         const { dispatch } = this.props;
-        const { selectedRows } = this.state;
+        const { oprKey,dataset_id,selectedRows } = this.state;
 
-       
+        var labels = new Array();
+        selectedRows.map(item=>{
+          labels.push(item.label_name);    
+        });
+
+        var record = {
+          dataset_type:oprKey,
+          dataset_id:dataset_id,
+          labels:labels
+        }
+        dispatch({
+          type:'ds/rmLabels',
+          payload:record,
+        });
       },
     });
   }
   // 查询标签
 	searchLabels = v =>{
+    const { dispatch } = this.props;
+    const { oprKey,dataset_id } = this.state;
+    var record = {
+          dataset_type:oprKey,
+          dataset_id:dataset_id,
+          label_name:v
+    }
+
+    dispatch({
+      type:'ds/queryLabel',
+      payload:record,
+    });
 
   }
 
